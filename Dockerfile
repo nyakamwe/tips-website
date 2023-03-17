@@ -1,17 +1,17 @@
-# Build stage
-FROM node:14-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
+# Use the official Node.js image as the base image
+FROM node:14-alpine
 
-# Production stage
-FROM node:14-alpine AS production
+# Set the working directory to /app
 WORKDIR /app
+
+# Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
-RUN npm ci --only=production
-COPY --from=build /app/build ./build
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application files to the working directory
 COPY . .
-EXPOSE 3000
+
+# Set the command to run when the container starts up
 CMD ["npm", "start"]
